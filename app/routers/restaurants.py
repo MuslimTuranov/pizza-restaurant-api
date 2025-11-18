@@ -5,6 +5,7 @@ from .. import models, schemas
 
 router = APIRouter(prefix="/restaurants", tags=["Restaurants"])
 
+
 @router.post("/", response_model=schemas.Restaurant)
 def create_restaurant(data: schemas.RestaurantBase, db: Session = Depends(get_db)):
     rest = models.Restaurant(**data.dict())
@@ -13,13 +14,19 @@ def create_restaurant(data: schemas.RestaurantBase, db: Session = Depends(get_db
     db.refresh(rest)
     return rest
 
+
 @router.get("/", response_model=list[schemas.Restaurant])
 def list_restaurants(db: Session = Depends(get_db)):
     return db.query(models.Restaurant).all()
 
+
 @router.get("/{restaurant_id}/menu/", response_model=schemas.RestaurantMenuResponse)
 def restaurant_menu(restaurant_id: int, db: Session = Depends(get_db)):
-    restaurant = db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+    restaurant = (
+        db.query(models.Restaurant)
+        .filter(models.Restaurant.id == restaurant_id)
+        .first()
+    )
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
 
@@ -29,12 +36,9 @@ def restaurant_menu(restaurant_id: int, db: Session = Depends(get_db)):
             cheese_type=p.cheese_type,
             dough_type=p.dough_type,
             secret_ingredient=p.secret_ingredient,
-            ingredients=[i.name for i in p.ingredients]
+            ingredients=[i.name for i in p.ingredients],
         )
         for p in restaurant.pizzas
     ]
 
-    return schemas.RestaurantMenuResponse(
-        restaurant=restaurant.name,
-        menu=menu
-    )
+    return schemas.RestaurantMenuResponse(restaurant=restaurant.name, menu=menu)

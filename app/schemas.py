@@ -18,6 +18,14 @@ class Ingredient(IngredientBase):
         orm_mode = True
 
 
+class IngredientUpdate(BaseModel):
+    name: Optional[str] = None
+    pizza_ids: List[int] = []
+
+    class Config:
+        orm_mode = True
+
+
 class PizzaBase(BaseModel):
     name: str
     cheese_type: str
@@ -69,6 +77,14 @@ class Chef(ChefBase):
         orm_mode = True
 
 
+class ChefUpdate(BaseModel):
+    name: Optional[str] = None
+    restaurant_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
 class RestaurantBase(BaseModel):
     name: str
     address: str
@@ -83,6 +99,16 @@ class Restaurant(RestaurantBase):
     id: int
     chef: Optional[Chef] = None
     pizzas: List[Pizza] = []
+
+    class Config:
+        orm_mode = True
+
+
+class RestaurantUpdate(BaseModel):
+    name: Optional[str] = None
+    address: Optional[str] = None
+    chef_id: Optional[int] = None
+    pizza_ids: List[int] = []
 
     class Config:
         orm_mode = True
@@ -116,6 +142,15 @@ class ReviewResponse(BaseModel):
     text: str
     restaurant_id: int
     restaurant_name: str
+
+    class Config:
+        orm_mode = True
+
+
+class ReviewUpdate(BaseModel):
+    rating: Optional[int] = None
+    comment: Optional[str] = None
+    pizza_id: Optional[int] = None
 
     class Config:
         orm_mode = True

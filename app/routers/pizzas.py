@@ -14,7 +14,7 @@ def create_pizza(data: schemas.PizzaCreate, db: Session = Depends(get_db)):
         .first()
     )
     if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+        raise HTTPException(status_code=404, detail="Restaurant is not found")
 
     ingredients = (
         db.query(models.Ingredient)
@@ -22,7 +22,9 @@ def create_pizza(data: schemas.PizzaCreate, db: Session = Depends(get_db)):
         .all()
     )
     if len(ingredients) != len(data.ingredient_ids):
-        raise HTTPException(status_code=404, detail="One or more ingredients not found")
+        raise HTTPException(
+            status_code=404, detail="One or more ingredients are not found"
+        )
 
     pizza = models.Pizza(
         name=data.name,
@@ -49,7 +51,7 @@ def update_pizza(
 ):
     pizza = db.query(models.Pizza).filter(models.Pizza.id == pizza_id).first()
     if not pizza:
-        raise HTTPException(status_code=404, detail="Pizza not found")
+        raise HTTPException(status_code=404, detail="Pizza is not found")
 
     for field, value in data.dict(exclude={"ingredient_ids"}).items():
         if value is not None:
@@ -63,7 +65,7 @@ def update_pizza(
         )
         if len(ingredients) != len(data.ingredient_ids):
             raise HTTPException(
-                status_code=404, detail="One or more ingredients not found"
+                status_code=404, detail="One or more ingredients are not found"
             )
         pizza.ingredients = ingredients
 
@@ -76,7 +78,7 @@ def update_pizza(
 def delete_pizza(pizza_id: int, db: Session = Depends(get_db)):
     pizza = db.query(models.Pizza).filter(models.Pizza.id == pizza_id).first()
     if not pizza:
-        raise HTTPException(status_code=404, detail="Pizza not found")
+        raise HTTPException(status_code=404, detail="Pizza is not found")
     db.delete(pizza)
     db.commit()
-    return {"message": "Pizza deleted"}
+    return {"message": "Pizza is deleted"}

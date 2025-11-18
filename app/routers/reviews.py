@@ -45,3 +45,31 @@ def list_reviews(db: Session = Depends(get_db)):
         )
         for r in reviews
     ]
+
+
+@router.delete("/{review_id}")
+def delete_review(review_id: int, db: Session = Depends(get_db)):
+    review = db.query(models.Review).filter(models.Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+
+    db.delete(review)
+    db.commit()
+    return {"message": "Review is deleted"}
+
+
+@router.put("/{review_id}", response_model=schemas.ReviewResponse)
+def update_review(
+    review_id: int, data: schemas.ReviewUpdate, db: Session = Depends(get_db)
+):
+    review = db.query(models.Review).filter(models.Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review is not found")
+
+    for field, value in data.dict().items():
+        if value is not None:
+            setattr(review, field, value)
+
+    db.commit()
+    db.refresh(review)
+    return review

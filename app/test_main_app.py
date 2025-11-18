@@ -3,6 +3,7 @@ from .main_app import app
 
 client = TestClient(app)
 
+
 def test_create_pizza():
     response = client.post(
         "/pizzas/",
@@ -12,8 +13,8 @@ def test_create_pizza():
             "dough_type": "Thin Crust",
             "secret_ingredient": "Basil Oil",
             "restaurant_id": 1,
-            "ingredient_ids": [1, 2]
-        }
+            "ingredient_ids": [1, 2],
+        },
     )
 
     assert response.status_code == 200
@@ -25,9 +26,8 @@ def test_create_pizza():
     assert data["secret_ingredient"] == "Basil Oil"
     assert data["ingredients"] == [
         {"id": 1, "name": "Tomato"},
-        {"id": 2, "name": "Sausage"}
+        {"id": 2, "name": "Sausage"},
     ]
-
 
 
 def test_create_bad_pizza():
@@ -39,8 +39,8 @@ def test_create_bad_pizza():
             "dough_type": "Thin Crust",
             "secret_ingredient": "Basil Oil",
             "restaurant_id": 2,
-            "ingredient_ids": [1, 2]
-        }
+            "ingredient_ids": [1, 2],
+        },
     )
 
     assert response.status_code == 404

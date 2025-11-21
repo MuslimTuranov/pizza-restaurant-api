@@ -1,4 +1,4 @@
-Pizza Restaurant API
+**Pizza Restaurant API**
 
 This project includes:
 
@@ -30,7 +30,8 @@ Tech Stack:
 
 * Ruff + Mypy — linting & static type checking
 
-How to Run with Docker
+
+**How to Run with Docker**
 ```
 docker-compose up --build
 ```
@@ -43,12 +44,13 @@ Swagger documentation:
 http://127.0.0.1:8000/docs
 
 
-Running Tests
+**Running Tests**
 ```
 pytest
 ```
 
-Linting
+
+**Linting**
 
 Ruff
 ```
@@ -61,7 +63,7 @@ mypy
 mypy app/
 ```
 
-Request Examples:
+**Request Examples:**
 Create a Restaurant
 POST /restaurants/
 {

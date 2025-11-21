@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import models, schemas
+from sqlalchemy import func
+
 
 router = APIRouter(prefix="/restaurants", tags=["Restaurants"])
 
@@ -77,3 +79,30 @@ def update_restaurant(
     db.commit()
     db.refresh(restaurant)
     return restaurant
+
+
+@router.get("/ranking-by-rating")
+def get_restaurants_by_rating(min_rating: float = 0, db: Session = Depends(get_db)):
+    restaurants_with_rating = (
+        db.query(
+            models.Restaurant,
+            func.coalesce(func.avg(models.Review.rating), 0).label("avg_rating")
+        )
+        .outerjoin(models.Review)  
+        .group_by(models.Restaurant.id)
+        .having(func.coalesce(func.avg(models.Review.rating), 0) >= min_rating)
+        .order_by(func.avg(models.Review.rating).desc())  
+        .all()
+    )
+
+    result = [
+        {
+            "id": r.Restaurant.id,
+            "name": r.Restaurant.name,
+            "address": r.Restaurant.address,
+            "avg_rating": float(r.avg_rating)
+        }
+        for r in restaurants_with_rating
+    ]
+
+    return result

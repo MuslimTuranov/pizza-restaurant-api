@@ -1,0 +1,7 @@
+__pycache__/
+.mypy_cache/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.env

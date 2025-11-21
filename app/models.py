@@ -15,7 +15,9 @@ class Restaurant(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
     address = Column(String)
-    chef = relationship("Chef", back_populates="restaurant", uselist=False)
+    chef = relationship(
+        "Chef", back_populates="restaurant", uselist=False
+    )
     pizzas = relationship("Pizza", back_populates="restaurant")
     reviews = relationship("Review", back_populates="restaurant")
 

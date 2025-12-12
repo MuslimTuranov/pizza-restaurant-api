@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -9,6 +11,15 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
   api:
     build: .
     command: uvicorn app.main_app:app --host 0.0.0.0 --port 8000 --reload
@@ -16,7 +27,13 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/pizza_db
+      - REDIS_HOST=redis
     depends_on:
       - db
+      - redis
+
 volumes:
   postgres_data:
+  redis_data:

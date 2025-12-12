@@ -1,30 +1,26 @@
+# app/schemas.py
 from pydantic import BaseModel
 from typing import List, Optional
 
+# ------------------ Ingredients ------------------
 
 class IngredientBase(BaseModel):
     name: str
 
-
 class IngredientCreate(IngredientBase):
-    class Config:
-        orm_mode = True
-
+    pass
 
 class Ingredient(IngredientBase):
     id: int
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True  # Заменяет orm_mode = True в Pydantic v2
 
 
 class IngredientUpdate(BaseModel):
     name: Optional[str] = None
-    pizza_ids: List[int] = []
 
-    class Config:
-        orm_mode = True
-
+# ------------------ Pizzas ------------------
 
 class PizzaBase(BaseModel):
     name: str
@@ -32,13 +28,15 @@ class PizzaBase(BaseModel):
     dough_type: str
     secret_ingredient: str
 
-
 class PizzaCreate(PizzaBase):
     restaurant_id: int
     ingredient_ids: List[int] = []
 
+class Pizza(PizzaBase):
+    id: int
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PizzaUpdate(BaseModel):
@@ -46,73 +44,47 @@ class PizzaUpdate(BaseModel):
     cheese_type: Optional[str] = None
     dough_type: Optional[str] = None
     secret_ingredient: Optional[str] = None
-    ingredient_ids: List[int] = []
 
-    class Config:
-        orm_mode = True
-
-
-class Pizza(PizzaBase):
-    id: int
-    ingredients: List[Ingredient] = []
-
-    class Config:
-        orm_mode = True
-
+# ------------------ Chefs ------------------
 
 class ChefBase(BaseModel):
     name: str
     restaurant_id: int
 
-
 class ChefCreate(ChefBase):
-    class Config:
-        orm_mode = True
-
+    pass
 
 class Chef(ChefBase):
     id: int
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ChefUpdate(BaseModel):
     name: Optional[str] = None
-    restaurant_id: Optional[int] = None
 
-    class Config:
-        orm_mode = True
-
+# ------------------ Restaurants ------------------
 
 class RestaurantBase(BaseModel):
     name: str
     address: str
 
-
 class RestaurantCreate(RestaurantBase):
-    class Config:
-        orm_mode = True
-
+    pass
 
 class Restaurant(RestaurantBase):
     id: int
-    chef: Optional[Chef] = None
-    pizzas: List[Pizza] = []
-
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class RestaurantUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
-    chef_id: Optional[int] = None
-    pizza_ids: List[int] = []
 
-    class Config:
-        orm_mode = True
-
+# ------------------ Menu ------------------
 
 class PizzaInMenu(BaseModel):
     name: str
@@ -120,37 +92,44 @@ class PizzaInMenu(BaseModel):
     dough_type: str
     secret_ingredient: str
     ingredients: List[str]
+    
+    class Config:
+        from_attributes = True
 
 
 class RestaurantMenuResponse(BaseModel):
     restaurant: str
     menu: List[PizzaInMenu]
+    
+    class Config:
+        from_attributes = True
 
+# ------------------ Reviews ------------------
 
 class ReviewBase(BaseModel):
     rating: int
     text: str
     restaurant_id: int
 
-    class Config:
-        orm_mode = True
+class ReviewCreate(ReviewBase):
+    pass
 
+class Review(ReviewBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
 
 class ReviewResponse(BaseModel):
     id: int
     rating: int
     text: str
     restaurant_id: int
-    restaurant_name: str
-
+    restaurant_name: str 
+    
     class Config:
-        orm_mode = True
-
+        from_attributes = True
 
 class ReviewUpdate(BaseModel):
     rating: Optional[int] = None
-    comment: Optional[str] = None
-    pizza_id: Optional[int] = None
-
-    class Config:
-        orm_mode = True
+    text: Optional[str] = None

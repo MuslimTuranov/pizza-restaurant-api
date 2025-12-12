@@ -82,3 +82,14 @@ def delete_pizza(pizza_id: int, db: Session = Depends(get_db)):
     db.delete(pizza)
     db.commit()
     return {"message": "Pizza is deleted"}
+
+
+@router.get("/search-by-ingredient/")
+def search_pizzas_by_ingredient(name: str, db: Session = Depends(get_db)):
+    pizzas = (
+        db.query(models.Pizza)
+        .join(models.Pizza.ingredients)
+        .filter(models.Ingredient.name.ilike(f"%{name}%"))
+        .all()
+    )
+    return pizzas
